@@ -1,7 +1,13 @@
-public abstract class maze{
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
 
-  public static void main(String[] args){
-    
+
+public class maze extends JPanel{
+
+  public maze(){
+
+
   }
 
 }
