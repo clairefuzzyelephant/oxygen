@@ -10,9 +10,9 @@ public class app extends JFrame{
 
   private void initUI(){
 
-    add(new maze());
+    add(new mazegen());
 
-    setSize(500,500);
+    setSize(100000,100000);
 
     setTitle("Oxygen");
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
