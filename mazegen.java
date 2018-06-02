@@ -9,6 +9,7 @@ public class mazegen extends JFrame{
   private int counteri;
   private int counterj;
   public int dim = 800; //pixel dimension of the maze
+  public int box = (dim-50)/30; //25
 
   public mazegen(){
     setSize(dim,dim);
@@ -18,15 +19,18 @@ public class mazegen extends JFrame{
     counteri = 0;
     counterj = 0;
 
-    allcells = new cell[(dim - 50)/30][(dim - 50)/30];
-    for (int i = 40; i < dim-50 && counteri < (dim - 50)/30; i += 30){
+    allcells = new cell[box][box]; //25
+    for (int i = 40; (i <= (dim-20)) && counteri <= box; i += 30){
       counterj = 0;
-      for (int j = 40; j < dim-50 && counterj < (dim - 50)/30; j += 30){
+      for (int j = 40; (j <= (dim-20)) && counterj <= box; j += 30){
         allcells[counteri][counterj] = new cell(i,j);
         counterj++;
       }
       counteri++;
     }
+
+    System.out.println(counteri + " " + counterj);
+    //System.exit(0);
 
     allcells[0][0].visited();
   }
@@ -42,12 +46,14 @@ public class mazegen extends JFrame{
 
       }
     }
+
+
+    gen(new cell(), g2d);
+
     g2d.fillRect(30, dim-50, dim-70, 10);
     g2d.fillRect(dim-50, 30, 10, dim-100);
 
     g2d.clearRect(30, 40, 10, 20);
-
-    gen(new cell(), g2d);
 
 
 }
@@ -63,26 +69,31 @@ public class mazegen extends JFrame{
       System.out.println("xind = " + xind);
       System.out.println("yind = " + yind);
 
-      if (xind == (dim - 50)/30 && yind == (dim - 50)/30){
+      if (xind == box-1 && yind == box-1){
         System.out.println("SUCCESSSSSSS-------------------------");
         return true;
       }
 
       //creating the unvisited list
       ArrayList<cell> unvisited = new ArrayList<cell>();
-      if (yind > 1 && allcells[xind][yind-1].getMarkStatus() == false){
+      if ((yind > 1) && allcells[xind][yind-1].getMarkStatus() == false){
           unvisited.add(allcells[xind][yind-1]);
           allcells[xind][yind-1].setDirection("left");
       }
-      if (xind > 1 && allcells[xind-1][yind].getMarkStatus() == false){
+      if ((xind > 1) && allcells[xind-1][yind].getMarkStatus() == false){
           unvisited.add(allcells[xind-1][yind]);
           allcells[xind-1][yind].setDirection("top");
       }
-      if (yind < (dim - 50)/30 && allcells[xind][yind+1].getMarkStatus() == false){
+      System.out.println("hello");
+      System.out.println(xind + " " + yind);
+      System.out.println(box);
+      if ((yind < box-1) && (allcells[xind][yind+1].getMarkStatus() == false)){
+        System.out.println("FJKDJSF");
           unvisited.add(allcells[xind][yind+1]);
           allcells[xind][yind+1].setDirection("right");
       }
-      if (xind < (dim - 50)/30 && allcells[xind+1][yind].getMarkStatus()== false){
+      if ((xind < box-1) && (allcells[xind+1][yind].getMarkStatus() == false)){
+          System.out.println("vegefef");
           unvisited.add(allcells[xind+1][yind]);
           allcells[xind+1][yind].setDirection("bottom");
       }
@@ -118,8 +129,15 @@ public class mazegen extends JFrame{
         System.out.println(unvisited.get(q));
 
         if (gen(unvisited.get(q), thing) == true){
-          return true;
-        } //recursion
+
+          double r = (double)Math.random();
+          if (r > 0.5)
+            return true;
+          else{
+            return false;
+          }
+        }
+ //recursion*/
       }
       return false;
 
@@ -139,5 +157,6 @@ public class mazegen extends JFrame{
         new mazegen().setVisible(true);
       }
     });
+
   }
 }
