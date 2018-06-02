@@ -71,7 +71,7 @@ public class cell{
 
   public String toString(){
 
-    return "cell at " + x + ", " + y;
+    return "cell at " + y + ", " + x;
   }
 
 
