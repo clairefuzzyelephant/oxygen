@@ -21,11 +21,13 @@ public class mazegen extends JFrame{
     for (int i = 40; i < 800 && counteri < 26; i += 30){
       counterj = 0;
       for (int j = 40; j < 800 && counterj < 26; j += 30){
-        allcells[counterj][counteri] = new cell(i,j);
+        allcells[counteri][counterj] = new cell(i,j);
         counterj++;
       }
       counteri++;
     }
+
+    allcells[0][0].visited();
 
   }
 
@@ -45,6 +47,8 @@ public class mazegen extends JFrame{
       }
     }
 
+    g2d.clearRect(30, 40, 10, 20);
+
 
     gen(new cell(), g2d);
 
@@ -59,11 +63,14 @@ public class mazegen extends JFrame{
 
   void gen(cell now, Graphics thing){
 
-      int x = now.getX();
-      int y = now.getY();
+      int x = now.getY();
+      int y = now.getX();
+
+      int yind = now.getY()/30-1;
 
       int xind = now.getX()/30-1;
-      int yind = now.getY()/30-1;
+      System.out.println("xind = " + xind);
+      System.out.println("yind = " + yind);
 
 
       ArrayList<cell> unvisited = new ArrayList<cell>();
@@ -91,6 +98,8 @@ public class mazegen extends JFrame{
           allcells[xind+1][yind].setDirection("bottom");
         }
       }
+
+      System.out.println(unvisited);
 
       int q = (int)(Math.random() * unvisited.size());
       System.out.println(q);
