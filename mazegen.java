@@ -10,6 +10,7 @@ public class mazegen extends JFrame{
   private int counterj;
   public int dim = 800; //pixel dimension of the maze
   public int box = (dim-50)/30; //25
+  private ArrayList<cell> unvisited = new ArrayList<cell>();
 
   public mazegen(){
     setSize(dim,dim);
@@ -38,43 +39,40 @@ public class mazegen extends JFrame{
   void lines(Graphics m){
     Graphics2D g2d = (Graphics2D)m;
 
-    outer: for (int i = 30; i < dim-50; i += 30){
+    outer:
+    for (int i = 30; i < dim-50; i += 30){
       for (int j = 30; j < dim-50; j += 30){
         g2d.fillRect(i, j+10, 10, 20);
         g2d.fillRect(i + 10, j, 20, 10);
         g2d.fillRect(i, j, 10, 10);
-
       }
     }
-
 
     gen(new cell(), g2d);
 
     g2d.fillRect(30, dim-50, dim-70, 10);
     g2d.fillRect(dim-50, 30, 10, dim-100);
-
     g2d.clearRect(30, 40, 10, 20);
 
-
-}
+  }
 
   boolean gen(cell now, Graphics thing){
 
-      int x = now.getY();
-      int y = now.getX();
+      int x = now.getX();
+      int y = now.getY();
 
       int yind = now.getY()/30-1;
-
       int xind = now.getX()/30-1;
       System.out.println("xind = " + xind);
       System.out.println("yind = " + yind);
 
       if (xind == box-1 && yind == box-1){
-        System.out.println("SUCCESSSSSSS-------------------------");
+        System.out.println("SUCCESSSSSSS");
         return true;
       }
 
       //creating the unvisited list
+      unvisited.clear();
       ArrayList<cell> unvisited = new ArrayList<cell>();
       if ((yind > 1) && allcells[xind][yind-1].getMarkStatus() == false){
           unvisited.add(allcells[xind][yind-1]);
@@ -84,23 +82,19 @@ public class mazegen extends JFrame{
           unvisited.add(allcells[xind-1][yind]);
           allcells[xind-1][yind].setDirection("top");
       }
-      System.out.println("hello");
+      System.out.println("hibhob");
       System.out.println(xind + " " + yind);
-      System.out.println(box);
       if ((yind < box-1) && (allcells[xind][yind+1].getMarkStatus() == false)){
-        System.out.println("FJKDJSF");
           unvisited.add(allcells[xind][yind+1]);
           allcells[xind][yind+1].setDirection("right");
       }
       if ((xind < box-1) && (allcells[xind+1][yind].getMarkStatus() == false)){
-          System.out.println("vegefef");
           unvisited.add(allcells[xind+1][yind]);
           allcells[xind+1][yind].setDirection("bottom");
       }
       System.out.println(unvisited);
 
       int counter = unvisited.size();
-
 
       //this part clears the walls
       while (counter > 0){
@@ -122,22 +116,20 @@ public class mazegen extends JFrame{
           thing.clearRect(x, y+20, 20, 10);
           System.out.println("bottom cleared");
         }
-        else{
+        else if (unvisited.get(q).getDirection() == "left"){
           thing.clearRect(x-10, y, 10, 20);
           System.out.println("left cleared");
         }
         System.out.println(unvisited.get(q));
 
         if (gen(unvisited.get(q), thing) == true){
-
-          double r = (double)Math.random();
+          double r = Math.random();
           if (r > 0.5)
             return true;
-          else{
+          else
             return false;
-          }
         }
- //recursion*/
+        //recursion
       }
       return false;
 
