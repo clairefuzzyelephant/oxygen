@@ -8,6 +8,7 @@ public class Tree extends Sprite {
     private final int TREE_SPEED = 1;
     protected int dx, dy;
     private boolean treeAlive = true;
+    private boolean justDead = false;
     private final double direction = Math.random();
     private double nDirection = Math.random();
 
@@ -29,19 +30,34 @@ public class Tree extends Sprite {
       return dy;
     }
 
+    public boolean getDeathStatus(){
+      return justDead;
+    }
+
+    public void justDied(){
+      justDead = true;
+    }
+
+    public void diedForAWhile(){
+      justDead = false;
+    }
+
     public void move() {
 
         x += dx;
         y += dy;
 
-        if(direction < 0.25)
-            dx = -1;
-        else if (direction > 0.25 && direction < 0.5)
-            dx = 1;
-        else if (direction > 0.5 && direction < 0.75)
-            dy = -1;
-        else if (direction > 0.75)
-            dy = 1;
+        //directions for tree, will have to fix when integrating
+        if (this.isAlive()){
+            if(direction < 0.25)
+                dx = -1;
+            else if (direction > 0.25 && direction < 0.5)
+                dx = 1;
+            else if (direction > 0.5 && direction < 0.75)
+                dy = -1;
+            else if (direction > 0.75)
+                dy = 1;
+        }
 
         //below is my failed attempt to fix movement
         /*if (x <= 0){
