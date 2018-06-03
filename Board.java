@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.util.concurrent.TimeUnit;
 
 public class Board extends JPanel implements ActionListener {
 
     private Timer timer;
-    private Person person;
+    private Player player;
     private List<Tree> trees = new ArrayList<>();
     private boolean inGame;
     private final int P_X = 20;
@@ -45,7 +46,7 @@ public class Board extends JPanel implements ActionListener {
 
         setPreferredSize(new Dimension(B_WIDTH, B_HEIGHT));
 
-        person = new Person(P_X, P_Y);
+        player = new Player(P_X, P_Y);
 
         timer = new Timer(DELAY, this);
         timer.start();
@@ -58,8 +59,8 @@ public class Board extends JPanel implements ActionListener {
 
     private void setTrees(){
       for (int[] p : pos){
-          p[0] = (int)(Math.random() * (B_WIDTH - 50)) + 50;
-          p[1] = (int)(Math.random() * (B_HEIGHT - 50)) + 50;
+          p[0] = (int)(Math.random() * (B_WIDTH - 50)) + 40;
+          p[1] = (int)(Math.random() * (B_HEIGHT - 50)) + 40;
           trees.add(new Tree(p[0], p[1]));
       }
     }
@@ -80,7 +81,7 @@ public class Board extends JPanel implements ActionListener {
 
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.drawImage(person.getImage(), person.getX(), person.getY(), this);
+        g2d.drawImage(player.getImage(), player.getX(), player.getY(), this);
 
         //List<Tree> ts = person.getTrees();
 
@@ -112,7 +113,7 @@ public class Board extends JPanel implements ActionListener {
 
         inGame();
 
-        updatePerson();
+        updatePlayer();
         updateTrees();
 
         checkCollisions();
@@ -125,9 +126,9 @@ public class Board extends JPanel implements ActionListener {
             timer.stop();
     }
 
-    private void updatePerson() {
-        if (person.isVisible())
-            person.move();
+    private void updatePlayer() {
+        if (player.isVisible())
+            player.move();
     }
 
     private void updateTrees() {
@@ -156,7 +157,7 @@ public class Board extends JPanel implements ActionListener {
 
     public void checkCollisions() {
 
-        Rectangle r2 = person.getBounds();
+        Rectangle r2 = player.getBounds();
 
         //List<Tree> ts = trees;//person.getTrees();
 
@@ -168,7 +169,15 @@ public class Board extends JPanel implements ActionListener {
 
                     if(t.isAlive()){
                         t.killTree();
+                        t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
+                        try{
+                            Thread.sleep(5010);
+                        }
+                        catch(InterruptedException ex){
+                            Thread.currentThread().interrupt();
+                        }
                         System.out.println("tree is dead");
+                        System.out.println(t.getdx() + " " + t.getdy());
                     } else {
                         System.out.println("u r ded");
                         inGame = false;
@@ -182,12 +191,12 @@ public class Board extends JPanel implements ActionListener {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            person.keyReleased(e);
+            player.keyReleased(e);
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            person.keyPressed(e);
+            player.keyPressed(e);
         }
     }
 }
