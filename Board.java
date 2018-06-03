@@ -94,6 +94,11 @@ public class Board extends JPanel implements ActionListener {
         g2d.setColor(Color.WHITE);
         g2d.drawString("Trees left: " + trees.size(), 5, 15);
 
+        if (player.getOxygen() <= 10)
+            g2d.setColor(Color.RED);
+
+        g2d.drawString("Oxygen level: " + player.getOxygen() + "/100", 5, 35);
+
     }
 
     private void drawGameOver(Graphics g) {
@@ -115,6 +120,7 @@ public class Board extends JPanel implements ActionListener {
 
         updatePlayer();
         updateTrees();
+        updateOxygenLevel();
 
         checkCollisions();
 
@@ -147,6 +153,11 @@ public class Board extends JPanel implements ActionListener {
         }
     }
 
+    private void updateOxygenLevel(){
+        if (player.getOxygen() <= 0)
+            inGame = false;
+    }
+
     /*private void step() {
 
         person.move();
@@ -167,21 +178,29 @@ public class Board extends JPanel implements ActionListener {
 
                 if (r1.intersects(r2)) {
 
-                    if(t.isAlive()){
-                        t.killTree();
-                        t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
-                        try{
-                            Thread.sleep(5010);
+                    if(!t.getDeathStatus()){
+
+                        if(t.isAlive()){
+                            player.increaseOxygen();
+                            t.killTree();
+                            t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
+                            System.out.println("tree is dead");
+                            t.justDied();
+                            new java.util.Timer().schedule(
+                              new java.util.TimerTask() {
+                                  @Override
+                                  public void run() {
+                                      t.diedForAWhile();
+                                  }
+                              },
+                              5000
+                            );
+                        } else {
+                            System.out.println("u r ded");
+                            inGame = false;
                         }
-                        catch(InterruptedException ex){
-                            Thread.currentThread().interrupt();
-                        }
-                        System.out.println("tree is dead");
-                        System.out.println(t.getdx() + " " + t.getdy());
-                    } else {
-                        System.out.println("u r ded");
-                        inGame = false;
-                    }
+
+                  }
 
             }
         }
