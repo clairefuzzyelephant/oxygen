@@ -13,9 +13,13 @@ public class mazegen extends JFrame{
   private ArrayList<cell> unvisited = new ArrayList<cell>();
 
   public mazegen(){
-    setSize(dim,dim);
+
+    initUI();
+
+
+    /*setSize(dim,dim);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLocationRelativeTo(null);
+    setLocationRelativeTo(null);*/
 
     counteri = 0;
     counterj = 0;
@@ -35,6 +39,22 @@ public class mazegen extends JFrame{
 
     allcells[0][0].visited();
   }
+
+  private void initUI() {
+
+        add(new Board());
+
+        setTitle("Oxygen");
+        setSize(800, 800);
+
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+
+
+
+    }
 
   void lines(Graphics m){
     Graphics2D g2d = (Graphics2D)m;
