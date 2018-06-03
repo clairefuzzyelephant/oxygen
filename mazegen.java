@@ -8,23 +8,20 @@ public class mazegen extends JFrame{
   private cell[][] allcells;
   private int counteri;
   private int counterj;
-  public int dim = 800; //pixel dimension of the maze
+  public int dim = 500; //pixel dimension of the maze
   public int box = (dim-50)/30-1; //25
   private ArrayList<cell> unvisited = new ArrayList<cell>();
 
   public mazegen(){
-
-    initUI();
-
-
-    /*setSize(dim,dim);
+    setSize(dim,dim);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLocationRelativeTo(null);*/
+    setLocationRelativeTo(null);
 
     counteri = 0;
     counterj = 0;
 
     allcells = new cell[box][box]; //25
+    System.out.println(box);
     for (int i = 40; (i <= (dim-20)) && counteri < box; i += 30){
       counterj = 0;
       for (int j = 40; (j <= (dim-20)) && counterj < box; j += 30){
@@ -40,22 +37,6 @@ public class mazegen extends JFrame{
     allcells[0][0].visited();
   }
 
-  private void initUI() {
-
-        add(new Board());
-
-        setTitle("Oxygen");
-        setSize(800, 800);
-
-        setLocationRelativeTo(null);
-        setResizable(false);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-
-
-    }
-
   void lines(Graphics m){
     Graphics2D g2d = (Graphics2D)m;
 
@@ -69,13 +50,13 @@ public class mazegen extends JFrame{
     }
 
     gen(new cell(), g2d);
+  /*  falsepath(allcells[0][0], g2d);
     falsepath(allcells[0][0], g2d);
     falsepath(allcells[0][0], g2d);
     falsepath(allcells[0][0], g2d);
     falsepath(allcells[0][0], g2d);
     falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
+    falsepath(allcells[0][0], g2d);*/
 
     g2d.fillRect(30, dim-50, dim-70, 10);
     g2d.fillRect(dim-50, 30, 10, dim-100);
@@ -135,24 +116,25 @@ public class mazegen extends JFrame{
         int q = (int)(Math.random() * unvisited.size()); //randomly chooses unvisited cell
         //System.out.println(q);
 
+        System.out.println(unvisited.get(q).getDirection());
         unvisited.get(q).visited(); //marked as visited
         counter--;
 
         if (unvisited.get(q).getDirection() == "top"){
           thing.clearRect(x, y-10, 20, 10);
-          //System.out.println("top cleared");
+          System.out.println("top cleared");
         }
         else if (unvisited.get(q).getDirection() == "right"){
           thing.clearRect(x+20, y, 10, 20);
-          //System.out.println("right cleared");
+          System.out.println("right cleared");
         }
         else if (unvisited.get(q).getDirection() == "bottom"){
           thing.clearRect(x, y+20, 20, 10);
-          //System.out.println("bottom cleared");
+          System.out.println("bottom cleared");
         }
         else if (unvisited.get(q).getDirection() == "left"){
           thing.clearRect(x-10, y, 10, 20);
-          //System.out.println("left cleared");
+          System.out.println("left cleared");
         }
         //System.out.println(unvisited.get(q) + "----------------------");
 
@@ -167,7 +149,7 @@ public class mazegen extends JFrame{
       }
       return false;
 
-  }
+  }/*
 
   boolean falsepath(cell now, Graphics thing){
 
@@ -257,7 +239,7 @@ public class mazegen extends JFrame{
       return false;
 
   }
-
+*/
 
 
   public void paint(Graphics m){
