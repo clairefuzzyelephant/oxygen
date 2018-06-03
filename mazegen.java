@@ -204,7 +204,7 @@ public class mazegen extends JFrame{
         int q = (int)(Math.random() * unvisited.size()); //randomly chooses unvisited cell
         System.out.println(q);
 
-        //unvisited.get(q).visited(); //marked as visited
+        unvisited.get(q).visited(); //marked as visited
         counter--;
 
         if (unvisited.get(q).getDirection() == "top"){
