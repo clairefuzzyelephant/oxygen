@@ -12,9 +12,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.ArrayList;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.util.concurrent.TimeUnit;
+import javax.swing.*;
 
 public class Board extends JPanel implements ActionListener {
 
@@ -54,7 +52,6 @@ public class Board extends JPanel implements ActionListener {
 
     public void initTrees() {
         setTrees();
-        System.out.println(trees);
     }
 
     private void setTrees(){
@@ -94,10 +91,15 @@ public class Board extends JPanel implements ActionListener {
         g2d.setColor(Color.WHITE);
         g2d.drawString("Trees left: " + trees.size(), 5, 15);
 
-        if (player.getOxygen() <= 10)
+        if (player.getOxygen() <= 100)
             g2d.setColor(Color.RED);
 
-        g2d.drawString("Oxygen level: " + player.getOxygen() + "/100", 5, 35);
+        g2d.drawString("Oxygen level: " + (int) (player.getOxygen()) + "/1000", 5, 30);
+
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(370, 10, 20, 250);
+        g2d.setColor(Color.BLACK);
+        g2d.fillRect(373, 12 + (int)(player.getOxygen()/4), 14, 246 - (int)(player.getOxygen()/4));
 
     }
 
@@ -184,7 +186,6 @@ public class Board extends JPanel implements ActionListener {
                             player.increaseOxygen();
                             t.killTree();
                             t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
-                            System.out.println("tree is dead");
                             t.justDied();
                             new java.util.Timer().schedule(
                               new java.util.TimerTask() {
@@ -195,10 +196,8 @@ public class Board extends JPanel implements ActionListener {
                               },
                               5000
                             );
-                        } else {
-                            System.out.println("u r ded");
+                        } else
                             inGame = false;
-                        }
 
                   }
 
