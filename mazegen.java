@@ -60,6 +60,8 @@ public class mazegen extends JFrame{
 
     g2d.fillRect(30, dim-50, dim-70, 10);
     g2d.fillRect(dim-50, 30, 10, dim-100);
+    g2d.fillRect(30, 30, dim-70, 10);
+    g2d.fillRect(30, 30, 10, dim-100);
     g2d.clearRect(30, 40, 10, 20);
 
   }
@@ -84,12 +86,12 @@ public class mazegen extends JFrame{
       //creating the unvisited list
       unvisited.clear();
       ArrayList<cell> unvisited = new ArrayList<cell>();
-      if ((yind > 1) && allcells[xind][yind-1].getMarkStatus() == false){
+      if ((yind > 0) && allcells[xind][yind-1].getMarkStatus() == false){
           unvisited.add(allcells[xind][yind-1]);
           //System.out.println(allcells[xind][yind-1]);
           allcells[xind][yind-1].setDirection("left");
       }
-      if ((xind > 1) && allcells[xind-1][yind].getMarkStatus() == false){
+      if ((xind > 0) && allcells[xind-1][yind].getMarkStatus() == false){
           unvisited.add(allcells[xind-1][yind]);
           //System.out.println(allcells[xind-1][yind]);
           allcells[xind-1][yind].setDirection("top");
@@ -149,7 +151,8 @@ public class mazegen extends JFrame{
       }
       return false;
 
-  }/*
+  }
+  /*
 
   boolean falsepath(cell now, Graphics thing){
 
