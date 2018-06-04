@@ -6,8 +6,8 @@ import java.util.List;
 
 public class Player extends Sprite{
 
-    private double oxygenLevel = 100; //these are arbitrary and can be changed
-    private double doxy = 0.2;
+    private double oxygenLevel = 1000; //these are arbitrary and can be changed
+    private double doxy = 1;
     private int dx, dy;
     private Image image;
     private boolean[] pressedChars = new boolean[5];
@@ -34,7 +34,10 @@ public class Player extends Sprite{
     }
 
     public void increaseOxygen(){
-        oxygenLevel += 10;
+        if(oxygenLevel + 100 < 1000)
+            oxygenLevel += 10;
+        else
+            oxygenLevel = 1000;
     }
 
     /*public void spawn(){
@@ -52,19 +55,19 @@ public class Player extends Sprite{
         if (key == KeyEvent.VK_SPACE){
             if (pressedChars[1] == true){
                 dx = -2;
-                doxy = 0.02;
+                doxy = 5;
             }
             if (pressedChars[2] == true){
                 dx = 2;
-                doxy = 0.02;
+                doxy = 5;
             }
             if (pressedChars[3] == true){
                 dy = -2;
-                doxy = 0.02;
+                doxy = 5;
             }
             if (pressedChars[4] == true){
                 dy = 2;
-                doxy = 0.02;
+                doxy = 5;
             }
 
             pressedChars[0] = true;
@@ -73,11 +76,11 @@ public class Player extends Sprite{
         if (key == KeyEvent.VK_LEFT){
             if(pressedChars[0] == true){
                 dx = -2;
-                doxy = 0.02;
+                doxy = 5;
             }
             else{
                 dx = -1;
-                doxy = 0.02;
+                doxy = 2.5;
             }
             pressedChars[1] = true;
         }
@@ -85,11 +88,11 @@ public class Player extends Sprite{
         if (key == KeyEvent.VK_RIGHT){
             if(pressedChars[0] == true){
                 dx = 2;
-                doxy = 0.02;
+                doxy = 50;
             }
             else{
                 dx = 1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
             pressedChars[2] = true;
         }
@@ -97,11 +100,11 @@ public class Player extends Sprite{
         if (key == KeyEvent.VK_UP){
             if(pressedChars[0] == true){
                 dy = -2;
-                doxy = 0.02;
+                doxy = 5;
             }
             else{
                 dy = -1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
             pressedChars[3] = true;
         }
@@ -109,11 +112,11 @@ public class Player extends Sprite{
         if (key == KeyEvent.VK_DOWN){
             if(pressedChars[0] == true){
                 dy = 2;
-                doxy = 0.02;
+                doxy = 5;
             }
             else{
                 dy = 1;
-                doxy = 0.01;
+                doxy = 5;
             }
             pressedChars[4] = true;
         }
@@ -129,19 +132,19 @@ public class Player extends Sprite{
 
             if (pressedChars[1] == true){
                 dx = -1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
             if (pressedChars[2] == true){
                 dx = 1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
             if (pressedChars[3] == true){
                 dy = -1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
             if (pressedChars[4] == true){
                 dy = 1;
-                doxy = 0.01;
+                doxy = 2.5;
             }
 
             pressedChars[0] = false;
@@ -150,25 +153,25 @@ public class Player extends Sprite{
 
         if (key == KeyEvent.VK_LEFT) {
             dx = 0;
-            doxy = 0.005;
+            doxy = 1;
             pressedChars[1] = false;
         }
 
         if (key == KeyEvent.VK_RIGHT) {
             dx = 0;
-            doxy = 0.005;
+            doxy = 1;
             pressedChars[2] = false;
         }
 
         if (key == KeyEvent.VK_UP) {
             dy = 0;
-            doxy = 0.005;
+            doxy = 1;
             pressedChars[3] = false;
         }
 
         if (key == KeyEvent.VK_DOWN) {
             dy = 0;
-            doxy = 0.005;
+            doxy = 1;
             pressedChars[4] = false;
         }
     }
