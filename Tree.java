@@ -136,7 +136,6 @@ public class Tree extends Sprite {
         treeAlive = false;
         dx = 0;
         dy = 0;
-        System.out.println("dx = " + dx + " dy = " + dy);
         new java.util.Timer().schedule(
           new java.util.TimerTask() {
               @Override
