@@ -1,26 +1,48 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.awt.geom.*;
+import java.awt.event.*;
 
-public class mazegen extends JFrame{
+public class mazegen extends JPanel implements ActionListener{
 
+  private Timer timer;
+  private Player player;
+  private List<Tree> trees = new ArrayList<>();
+  private boolean inGame;
+  private boolean linesDrawn = false;
+  private final int P_X = 40;
+  private final int P_Y = 40;
+  private final int B_WIDTH = 800;
+  private final int B_HEIGHT = 800;
+  private final int DELAY = 10;
+  private int maxTrees = 5;
+  private int numTreesAlive = maxTrees;
+  private int[][] pos = new int[maxTrees][2];
   private cell[][] allcells;
-  private int counteri;
-  private int counterj;
-  public int dim = 800; //pixel dimension of the maze
+  private int counteri, counterj;
+  public final int dim = 800; //pixel dimension of the maze
   public int box = (dim-50)/30-1; //25
+  private ArrayList<cell> unvisited = new ArrayList<cell>();
 
   public mazegen(){
-    setSize(dim,dim);
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    setLocationRelativeTo(null);
+    initMaze();
+  }
+
+  private void initMaze(){
+
+    addKeyListener(new TAdapter());
+    setFocusable(true);
+    setBackground(Color.WHITE);
+    setDoubleBuffered(true);
+
+    inGame = true;
 
     counteri = 0;
     counterj = 0;
 
     allcells = new cell[box][box]; //25
-    System.out.println(box);
     for (int i = 40; (i <= (dim-20)) && counteri < box; i += 30){
       counterj = 0;
       for (int j = 40; (j <= (dim-20)) && counterj < box; j += 30){
@@ -30,58 +52,72 @@ public class mazegen extends JFrame{
       counteri++;
     }
 
-    System.out.println(counteri + " " + counterj);
-    //System.exit(0);
-
     allcells[0][0].visited();
+
+    initTrees();
+
+    player = new Player(P_X, P_Y);
+    timer = new Timer(DELAY, this);
+    timer.start();
+  }
+
+  public void initTrees() {
+      setTrees();
+  }
+
+  private void setTrees(){
+    for (int[] p : pos){
+        p[0] = (int)(Math.random() * dim);
+        p[1] = (int)(Math.random() * dim);
+        trees.add(new Tree(p[0], p[1]));
+    }
   }
 
   void lines(Graphics m){
-    Graphics2D g2d = (Graphics2D)m;
 
-    outer:
-    for (int i = 30; i < dim-50; i += 30){
-      for (int j = 30; j < dim-50; j += 30){
-        g2d.fillRect(i, j+10, 10, 20);
-        g2d.fillRect(i + 10, j, 20, 10);
-        g2d.fillRect(i, j, 10, 10);
-      }
-    }
+      Graphics2D g2d = (Graphics2D) m;
 
-    gen(new cell(), g2d);
-  /*  falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);
-    falsepath(allcells[0][0], g2d);*/
+      //if(!linesDrawn){
 
-    g2d.fillRect(30, dim-50, dim-70, 10);
-    g2d.fillRect(dim-50, 30, 10, dim-100);
-    g2d.clearRect(30, 40, 10, 20);
+          for (int i = 30; i < dim-50; i += 30){
+            for (int j = 30; j < dim-50; j += 30){
+              //left
+              g2d.fillRect(i, j+10, 10, 20);
+              //top
+              g2d.fillRect(i + 10, j, 20, 10);
+              //dots
+              g2d.fillRect(i, j, 10, 10);
+            }
+          }
+
+          gen(new cell(), g2d);
+
+          //bottommost
+          g2d.fillRect(30, dim-50, dim-70, 10);
+          //rightmost
+          g2d.fillRect(dim-50, 30, 10, dim-100);
+          g2d.clearRect(30, 40, 10, 20);
+
+          linesDrawn = true;
+      //}
 
   }
 
   boolean legal(int x, int y) {
-    if (x < 0 || x >= box || y < 0 || y >= box) {
-      return false;
-    }
-    if (allcells[x][y].getMarkStatus()) {
-      return false;
-    }
-    return true;
+      if (x < 0 || x >= box || y < 0 || y >= box)
+        return false;
+      if (allcells[x][y].getMarkStatus())
+        return false;
+      return true;
   }
 
-  void gen(cell now, Graphics thing){
+  void gen(cell c, Graphics g){
 
-      int x = now.getX();
-      int y = now.getY();
-
+      int x = c.getX();
+      int y = c.getY();
 
       int xind = x/30-1;
       int yind = y/30-1;
-      System.out.println( "(" + xind + ", " + yind + ")" + "    x,y = (" + x + ", " + y + ")");
 
       //creating the unvisited list
       int[] dx = {0,0,1,-1};
@@ -103,137 +139,247 @@ public class mazegen extends JFrame{
       //this part clears the walls
       while (counter > 0){
         int q = (int)(Math.random() * unvisited.size()); //randomly chooses unvisited cell
-        //System.out.println(q);
         cell neighborCell = unvisited.get(q);
 
         counter--;
 
         String dir = neighborCell.getDirection();
         if (dir == "top"){
-          thing.clearRect(x, y-10, 20, 10);
-          System.out.println("top cleared");
+          g.clearRect(x, y-10, 20, 10);
+          c.clearTop();
         }
         else if (dir == "right"){
-          thing.clearRect(x+20, y, 10, 20);
-          System.out.println("right cleared");
+          g.clearRect(x+20, y, 10, 20);
+          c.clearRight();
         }
         else if (dir == "bottom"){
-          thing.clearRect(x, y+20, 20, 10);
-          System.out.println("bottom cleared");
+          g.clearRect(x, y+20, 20, 10);
+          c.clearBottom();
         }
         else if (dir == "left"){
-          thing.clearRect(x-10, y, 10, 20);
-          System.out.println("left cleared");
+          g.clearRect(x-10, y, 10, 20);
+          c.clearLeft();
         }
-        gen(neighborCell, thing);
+        gen(neighborCell, g);
         unvisited.remove(q);
+    }
+  }
+
+  public void maintain(cell c, Graphics g){
+
+    int x = c.getX();
+    int y = c.getY();
+    Graphics g2d = (Graphics2D)g;
+
+    for (int i = 30; i < dim-50; i += 30){
+      for (int j = 30; j < dim-50; j += 30){
+        g2d.fillRect(i, j+10, 10, 20);
+        g2d.fillRect(i + 10, j, 20, 10);
+        g2d.fillRect(i, j, 10, 10);
       }
-  }/*
+    }
 
-  boolean falsepath(cell now, Graphics thing){
-
-      int x = now.getY();
-      int y = now.getX();
-
-      System.out.println(x + " " + y);
-
-      int yind = x/30-1;
-      int xind = y/30-1;
-      System.out.println("xind = " + xind);
-      System.out.println("yind = " + yind);
-
-      int i = (int)(Math.random() * box);
-      int j = (int)(Math.random() * box);
-
-      if (xind == i && yind == j){
-        System.out.println("SUCCESSSSSSS");
-        return true;
-      }
-
-      //creating the unvisited list
-      unvisited.clear();
-      ArrayList<cell> unvisited = new ArrayList<cell>();
-      if ((yind > 1)){
-          unvisited.add(allcells[xind][yind-1]);
-          System.out.println(allcells[xind][yind-1]);
-          allcells[xind][yind-1].setDirection("left");
-      }
-      if ((xind > 1)){
-          unvisited.add(allcells[xind-1][yind]);
-          System.out.println(allcells[xind-1][yind]);
-          allcells[xind-1][yind].setDirection("top");
-      }
-      System.out.println("hibhob");
-      System.out.println(xind + " " + yind);
-      if ((yind < box-1)){
-          unvisited.add(allcells[xind][yind+1]);
-          System.out.println(allcells[xind][yind+1]);
-          allcells[xind][yind+1].setDirection("right");
-      }
-      if ((xind < box-1)){
-          unvisited.add(allcells[xind+1][yind]);
-          System.out.println(allcells[xind+1][yind]);
-          allcells[xind+1][yind].setDirection("bottom");
-      }
-      System.out.println(unvisited);
+    /*if(!c.hasLeft())
+      g2d.clearRect(x-10, y, 10, 20);
+    if(!c.hasRight())
+      g2d.clearRect(x+20, y, 10, 20);
+    if(!c.hasTop())
+      g2d.clearRect(x, y+20, 20, 10);
+    if(!c.hasBottom())
+      g2d.clearRect(x-10, y, 10, 20);*/
 
 
-      int counter = unvisited.size();
-
-      //this part clears the walls
-      while (counter > 0){
-        int q = (int)(Math.random() * unvisited.size()); //randomly chooses unvisited cell
-        System.out.println(q);
-
-        unvisited.get(q).visited(); //marked as visited
-        counter--;
-
-        if (unvisited.get(q).getDirection() == "top"){
-          thing.clearRect(x, y-10, 20, 10);
-          System.out.println("top cleared");
-        }
-        else if (unvisited.get(q).getDirection() == "right"){
-          thing.clearRect(x+20, y, 10, 20);
-          System.out.println("right cleared");
-        }
-        else if (unvisited.get(q).getDirection() == "bottom"){
-          thing.clearRect(x, y+20, 20, 10);
-          System.out.println("bottom cleared");
-        }
-        else if (unvisited.get(q).getDirection() == "left"){
-          thing.clearRect(x-10, y, 10, 20);
-          System.out.println("left cleared");
-        }
-        System.out.println(unvisited.get(q) + "----------------------");
-
-        if (gen(unvisited.get(q), thing) == true){
-          double r = Math.random();
-          if (r > 0)
-            return true;
-          else
-            return false;
-        }
-        //recursion
-      }
-      return false;
+    g2d.fillRect(30, dim-50, dim-70, 10);
+    g2d.fillRect(dim-50, 30, 10, dim-100);
+    g2d.clearRect(30, 40, 10, 20);
 
   }
-*/
-
 
   public void paint(Graphics m){
-    super.paint(m);
-    lines(m);
+      super.paint(m);
+      lines(m);
+      paintComponent(m);
   }
 
-  public static void main(String[] args){
+  @Override
+  public void paintComponent(Graphics g) {
 
-    SwingUtilities.invokeLater(new Runnable(){
-      @Override
-      public void run(){
-        new mazegen().setVisible(true);
+      if (inGame){
+        if ((player.getX() > 730 && player.getX() < 750) && (player.getY() > 730 && player.getY() < 750)){
+            drawWin(g);
+        } else
+          drawObjects(g);
       }
-    });
+      else
+        drawGameOver(g);
+
+      Toolkit.getDefaultToolkit().sync();
+  }
+
+  private void drawObjects(Graphics g) {
+
+      Graphics2D g2d = (Graphics2D) g;
+
+      /*for(int i = 0; i < allcells.length; i++){
+        for(int j = 0; j < allcells[i].length; j++){
+          maintain(allcells[i][j], g2d);
+        }
+      }*/
+
+      g2d.drawImage(player.getImage(), player.getX(), player.getY(), this);
+
+      for (Tree tree : trees){
+          g2d.drawImage(tree.getImage(), tree.getX(), tree.getY(), this);
+          if(tree.isAlive())
+              numTreesAlive++;
+      }
+
+      g2d.setColor(Color.BLACK);
+      g2d.drawString("Trees left: " + numTreesAlive, 5, 10);
+
+      g2d.setColor(Color.BLACK);
+      g2d.fillRect(770, 5, 20, 760);
+      g2d.setColor(Color.WHITE);
+
+      if(player.getOxygen() < 100)
+          g2d.setColor(Color.RED);
+
+      g2d.fillRect(773, 8 + (760 - (int)((player.getOxygen()/100)*76)),
+      14, 754 - (760 - (int)((player.getOxygen()/100)*76)));
+
+      numTreesAlive = 0;
 
   }
+
+  private void drawGameOver(Graphics g) {
+
+      String msg = "Game Over";
+      Font small = new Font("Helvetica", Font.BOLD, 14);
+      FontMetrics fm = getFontMetrics(small);
+
+      g.setColor(Color.red);
+      g.setFont(small);
+      g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2,
+              B_HEIGHT / 2);
+
+      new java.util.Timer().schedule(
+        new java.util.TimerTask() {
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        },
+        4000
+      );
+  }
+
+  private void drawWin(Graphics g){
+
+    String msg = "You win!";
+    Font small = new Font("Helvetica", Font.BOLD, 14);
+    FontMetrics fm = getFontMetrics(small);
+
+    g.setColor(Color.red);
+    g.setFont(small);
+    g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2,
+            B_HEIGHT / 2);
+
+    new java.util.Timer().schedule(
+      new java.util.TimerTask() {
+          @Override
+          public void run() {
+              System.exit(0);
+          }
+      },
+      4000
+    );
+
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+
+      inGame();
+
+      updatePlayer();
+      updateTrees();
+      updateOxygenLevel();
+
+      checkCollisions();
+
+      repaint();
+  }
+
+  private void inGame() {
+      if (!inGame)
+          timer.stop();
+  }
+
+  private void updatePlayer() {
+      player.move();
+  }
+
+  private void updateTrees() {
+
+      for (int i = 0; i < trees.size(); i++) {
+
+          Tree t = trees.get(i);
+
+          t.move();
+      }
+  }
+
+  private void updateOxygenLevel(){
+      if (player.getOxygen() <= 0)
+          inGame = false;
+  }
+
+  public void checkCollisions() {
+
+      Rectangle r2 = player.getBounds();
+
+      for (Tree t : trees) {
+
+          Rectangle r1 = t.getBounds();
+
+              if (r1.intersects(r2)) {
+
+                  if(!t.getDeathStatus()){
+
+                      if(t.isAlive()){
+                          player.increaseOxygen();
+                          t.killTree();
+                          t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
+                          t.justDied();
+                          new java.util.Timer().schedule(
+                            new java.util.TimerTask() {
+                                @Override
+                                public void run() {
+                                    t.diedForAWhile();
+                                }
+                            },
+                            5000
+                          );
+                      } else
+                          inGame = false;
+
+                }
+
+          }
+      }
+  }
+
+  private class TAdapter extends KeyAdapter {
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+          player.keyReleased(e);
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+          player.keyPressed(e);
+      }
+  }
+
 }
