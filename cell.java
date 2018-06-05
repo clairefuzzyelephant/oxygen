@@ -11,6 +11,10 @@ public class cell{
   private boolean mark;
   private boolean tree;
   private String direction;
+  private boolean left = true;
+  private boolean right = true;
+  private boolean top = true;
+  private boolean bottom = true;
 
   public cell(){
     x = 40;
@@ -52,7 +56,6 @@ public class cell{
     return tree;
   }
 
-
   public void visited(){
     mark = true;
   }
@@ -70,9 +73,39 @@ public class cell{
   }
 
   public String toString(){
-
     return "cell at " + y + ", " + x;
   }
 
+  public void clearLeft(){
+    left = false;
+  }
+
+  public void clearRight(){
+    right = false;
+  }
+
+  public void clearTop(){
+    top = false;
+  }
+
+  public void clearBottom(){
+    bottom = false;
+  }
+
+  public boolean hasLeft(){
+    return left;
+  }
+
+  public boolean hasRight(){
+    return right;
+  }
+
+  public boolean hasTop(){
+    return top;
+  }
+
+  public boolean hasBottom(){
+    return bottom;
+  }
 
 }

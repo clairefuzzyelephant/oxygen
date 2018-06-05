@@ -125,6 +125,11 @@ public class Tree extends Sprite {
             }
         }*/
 
+        else{
+          if(!justDead)
+            dx = 1;
+        }
+
     }
 
 
@@ -136,7 +141,7 @@ public class Tree extends Sprite {
         treeAlive = false;
         dx = 0;
         dy = 0;
-        new java.util.Timer().schedule(
+        /*new java.util.Timer().schedule(
           new java.util.TimerTask() {
               @Override
               public void run() {
@@ -144,7 +149,7 @@ public class Tree extends Sprite {
               }
           },
           5000
-        );
+        );*/
     }
 
 }

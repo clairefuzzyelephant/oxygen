@@ -4,16 +4,15 @@ import javax.swing.JFrame;
 public class window extends JFrame {
 
     public window() {
-
-        initUI();
+        initWindow();
     }
 
-    private void initUI() {
+    private void initWindow() {
 
-        add(new Board());
+        add(new mazegen());
 
         setTitle("Oxygen");
-        setSize(400, 300);
+        setSize(800, 800);
 
         setLocationRelativeTo(null);
         setResizable(false);

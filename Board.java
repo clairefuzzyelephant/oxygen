@@ -22,8 +22,8 @@ public class Board extends JPanel implements ActionListener {
     private boolean inGame;
     private final int P_X = 20;
     private final int P_Y = 20;
-    private final int B_WIDTH = 400;
-    private final int B_HEIGHT = 300;
+    private final int B_WIDTH = 800;
+    private final int B_HEIGHT = 800;
     private final int DELAY = 10;
     private int maxTrees = 5;
     private int[][] pos = new int[maxTrees][2];
@@ -52,12 +52,13 @@ public class Board extends JPanel implements ActionListener {
 
     public void initTrees() {
         setTrees();
+
     }
 
     private void setTrees(){
       for (int[] p : pos){
-          p[0] = (int)(Math.random() * (B_WIDTH - 50)) + 40;
-          p[1] = (int)(Math.random() * (B_HEIGHT - 50)) + 40;
+          p[0] = (int)(Math.random() * (B_WIDTH - 100)) + 50;
+          p[1] = (int)(Math.random() * (B_HEIGHT - 100)) + 50;
           trees.add(new Tree(p[0], p[1]));
       }
     }
@@ -97,9 +98,10 @@ public class Board extends JPanel implements ActionListener {
         g2d.drawString("Oxygen level: " + (int) (player.getOxygen()) + "/1000", 5, 30);
 
         g2d.setColor(Color.WHITE);
-        g2d.fillRect(370, 10, 20, 250);
+        g2d.fillRect(770, 15, 20, 760);
         g2d.setColor(Color.BLACK);
-        g2d.fillRect(373, 12 + (int)(player.getOxygen()/4), 14, 246 - (int)(player.getOxygen()/4));
+        g2d.fillRect(773, 18 + (760 - (int)((player.getOxygen()/100)*77)),
+        14, 750 - (760 - (int)((player.getOxygen()/100)*77)));
 
     }
 
@@ -113,6 +115,16 @@ public class Board extends JPanel implements ActionListener {
         g.setFont(small);
         g.drawString(msg, (B_WIDTH - fm.stringWidth(msg)) / 2,
                 B_HEIGHT / 2);
+
+        new java.util.Timer().schedule(
+          new java.util.TimerTask() {
+              @Override
+              public void run() {
+                  System.exit(0);
+              }
+          },
+          5000
+        );
     }
 
     @Override
