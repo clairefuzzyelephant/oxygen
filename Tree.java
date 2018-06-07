@@ -18,7 +18,7 @@ public class Tree extends Sprite {
     }
 
     private void initTree() {
-        loadImage("/Users/and1zhao/Downloads/treeAlive.png");
+        loadImage("/Users/and1zhao/Downloads/fireball.jpg");
         getImageDimensions();
     }
 
@@ -50,13 +50,13 @@ public class Tree extends Sprite {
         //directions for tree, will have to fix when integrating
         if (this.isAlive()){
             if(direction < 0.25)
-                dx = -1;
+                dx = -2;
             else if (direction > 0.25 && direction < 0.5)
-                dx = 1;
+                dx = 2;
             else if (direction > 0.5 && direction < 0.75)
-                dy = -1;
+                dy = -2;
             else if (direction > 0.75)
-                dy = 1;
+                dy = 2;
         }
 
         //below is my failed attempt to fix movement
@@ -127,7 +127,7 @@ public class Tree extends Sprite {
 
         else{
           if(!justDead)
-            dx = 1;
+            dx = 3;
         }
 
     }

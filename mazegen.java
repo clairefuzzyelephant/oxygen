@@ -12,8 +12,10 @@ public class mazegen extends JPanel implements ActionListener{
   private List<Tree> trees = new ArrayList<>();
   private boolean inGame;
   private boolean linesDrawn = false;
+  private double treeGen;
   private final int P_X = 40;
   private final int P_Y = 40;
+  private int tempX = 0, tempY = 0;
   private final int B_WIDTH = 800;
   private final int B_HEIGHT = 800;
   private final int DELAY = 10;
@@ -67,8 +69,8 @@ public class mazegen extends JPanel implements ActionListener{
 
   private void setTrees(){
     for (int[] p : pos){
-        p[0] = (int)(Math.random() * dim);
-        p[1] = (int)(Math.random() * dim);
+        p[0] = (int)(Math.random() * dim) + 50;
+        p[1] = (int)(Math.random() * dim) + 50;
         trees.add(new Tree(p[0], p[1]));
     }
   }
@@ -197,7 +199,7 @@ public class mazegen extends JPanel implements ActionListener{
 
   public void paint(Graphics m){
       super.paint(m);
-      lines(m);
+      //lines(m);
       paintComponent(m);
   }
 
@@ -205,7 +207,7 @@ public class mazegen extends JPanel implements ActionListener{
   public void paintComponent(Graphics g) {
 
       if (inGame){
-        if ((player.getX() > 730 && player.getX() < 750) && (player.getY() > 730 && player.getY() < 750)){
+        if (player.getOxygen() <= 0){
             drawWin(g);
         } else
           drawObjects(g);
@@ -234,15 +236,15 @@ public class mazegen extends JPanel implements ActionListener{
               numTreesAlive++;
       }
 
-      g2d.setColor(Color.BLACK);
-      g2d.drawString("Trees left: " + numTreesAlive, 5, 10);
+      //g2d.setColor(Color.BLACK);
+      //g2d.drawString("Trees left: " + numTreesAlive, 5, 10);
 
       g2d.setColor(Color.BLACK);
       g2d.fillRect(770, 5, 20, 760);
       g2d.setColor(Color.WHITE);
 
       if(player.getOxygen() < 100)
-          g2d.setColor(Color.RED);
+          g2d.setColor(Color.GREEN);
 
       g2d.fillRect(773, 8 + (760 - (int)((player.getOxygen()/100)*76)),
       14, 754 - (760 - (int)((player.getOxygen()/100)*76)));
@@ -316,10 +318,18 @@ public class mazegen extends JPanel implements ActionListener{
   }
 
   private void updatePlayer() {
-      player.move();
+      if(inGame)
+        player.move();
   }
 
   private void updateTrees() {
+
+      treeGen = Math.random();
+      tempX = (int)(Math.random() * dim);
+      tempY = (int)(Math.random()*  dim);
+
+      if(treeGen < 0.07 && ((tempX < player.getX() - 20) || (tempX > player.getX() + 40) || (tempY < player.getY() - 20) || (tempY > player.getY() + 40)))
+        trees.add(new Tree(tempX, tempY));
 
       for (int i = 0; i < trees.size(); i++) {
 
@@ -330,8 +340,8 @@ public class mazegen extends JPanel implements ActionListener{
   }
 
   private void updateOxygenLevel(){
-      if (player.getOxygen() <= 0)
-          inGame = false;
+      /*if (player.getOxygen() < 0)
+          inGame = false;*/
   }
 
   public void checkCollisions() {
@@ -347,7 +357,8 @@ public class mazegen extends JPanel implements ActionListener{
                   if(!t.getDeathStatus()){
 
                       if(t.isAlive()){
-                          player.increaseOxygen();
+                          inGame = false;
+                          //player.increaseOxygen();
                           t.killTree();
                           t.loadImage("/Users/and1zhao/Downloads/treeDead.png");
                           t.justDied();
